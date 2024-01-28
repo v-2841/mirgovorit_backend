@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}
+  Рецепты
+{% endblock title %}
+{% block content %}
+  <h2>Названия всех рецептов, в которых указанный продукт отсутствует, или присутствует в количестве меньше 10 грамм</h2>
+  <table border="1">
+    <tr>
+      <th>id</th>
+      <th>Название</th>
+    </tr>
+    {% for recipe in recipes %}
+      <tr>
+        <td>{{ recipe.id }}</td>
+        <td>{{ recipe.name }}</td>
+      </tr>
+    {% endfor %}
+  </table>
+{% endblock content %}
