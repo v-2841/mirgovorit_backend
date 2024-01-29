@@ -1,5 +1,5 @@
 from django.db import transaction
-from django.db.models import F, Q
+from django.db.models import F, Q, prefetch_related_objects
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
 from django.views.decorators.http import require_http_methods
@@ -31,8 +31,8 @@ def cook_recipe(request):
     recipe_id = request.GET.get('recipe_id', '')
     if not recipe_id:
         return HttpResponse(status=400)
-    recipe = get_object_or_404(
-        Recipe.objects.prefetch_related('products'), pk=recipe_id)
+    recipe = get_object_or_404(Recipe, pk=recipe_id)
+    prefetch_related_objects([recipe], 'products')
     Product.objects.filter(
         id__in=recipe.products.values_list('id')).update(
             cooked=F('cooked') + 1)
