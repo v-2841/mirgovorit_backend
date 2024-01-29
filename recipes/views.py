@@ -1,4 +1,5 @@
-from django.db.models import Q
+from django.db import transaction
+from django.db.models import F, Q
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
 from django.views.decorators.http import require_http_methods
@@ -30,9 +31,13 @@ def cook_recipe(request):
     if not recipe_id:
         return HttpResponse(status=400)
     recipe = get_object_or_404(Recipe, pk=recipe_id)
-    for product in recipe.products.all():
-        product.cooked += 1
-        product.save()
+    try:
+        with transaction.atomic():
+            for product in recipe.products.all():
+                Product.objects.filter(
+                    id=product.id).update(cooked=F('cooked') + 1)
+    except Exception:
+        return HttpResponse(status=500)
     return HttpResponse(status=200)
 
 
