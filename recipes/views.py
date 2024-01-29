@@ -1,3 +1,4 @@
+from django.db import transaction
 from django.db.models import F, Q
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
@@ -25,6 +26,7 @@ def add_product_to_recipe(request):
 
 
 @require_http_methods(['GET'])
+@transaction.atomic
 def cook_recipe(request):
     recipe_id = request.GET.get('recipe_id', '')
     if not recipe_id:
