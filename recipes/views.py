@@ -30,7 +30,8 @@ def cook_recipe(request):
     recipe_id = request.GET.get('recipe_id', '')
     if not recipe_id:
         return HttpResponse(status=400)
-    recipe = get_object_or_404(Recipe, pk=recipe_id)
+    recipe = get_object_or_404(
+        Recipe.objects.prefetch_related('products'), pk=recipe_id)
     try:
         with transaction.atomic():
             for product in recipe.products.all():
